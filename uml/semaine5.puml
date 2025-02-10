@@ -1,0 +1,370 @@
+@startuml
+'https://plantuml.com/class-diagram
+skinparam classAttributeIconSize 0 
+skinparam classFontStyle Bold
+skinparam style strictuml
+hide empty members
+
+package jeu
+{
+    class Affichage
+    {
+     + <<Create>> Affichage()
+     - {static} GRIS_CLAIR : String {readOnly}
+     - {static} BLEU_CLAIR : String {readOnly}
+     - {static} ROUGE : String {readOnly}
+     - {static} ROUGE_FONCE : String {readOnly}
+     - {static} VERT : String {readOnly}
+     - {static} BLEU : String {readOnly}
+     - {static} BLEU_TRES_CLAIR : String {readOnly}
+     - {static} VIOLET_CLAIR : String {readOnly}
+     - {static} ORANGE_CLAIR : String {readOnly}
+     - {static} RESET : String {readOnly}
+     + {static} afficherTour(tour : Integer, nomJoueur : String)
+     + {static} afficherTerrain(ordinateur : Joueur, joueur : Joueur)
+     + {static} afficherRegles()
+     - {static} afficherPokemonCarte(listePokemon : Pokemon[*])
+     - {static} afficherPokemonCarteEnnemi(listePokemon : Pokemon[*])
+     + {static} afficherMain(joueur : Joueur)
+     + {static} demanderPokemonPlacer(main : Pokemon[*])
+     + {static} demanderPokemonAJouer(joueur : Joueur)
+     + {static} demanderAfficherUtiliserPouvoir(pokemons : Pokemon[*], utiliser : Boolean)
+     + {static} demanderPokemonPouvoir(joueur : Joueur)
+     + {static} pokemonAfficher(pokemons : Pokemon[*])
+     + {static} pokemonAfficherEnnemie(pokemons : Pokemon[*])
+     + {static} pokemonAfficherPourJouer(pokemons : Pokemon[*])
+     + {static} finAttaquePokemon(ennemi : Pokemon, degatInflige : Integer)
+     + {static} affichageDebutJeu()
+     + {static} barreDeChargement(duree : Integer)
+     + {static} affichagePhrase(texte : String)
+     - {static} getAffiniteColor(affinite : Affinite) : String
+    }
+    class Defausse
+    {
+     + <<Create>> Defausse()
+     + ajouterPokemonDefausse(pokemon : Pokemon)
+     + tailleDefausse() : Integer
+    }
+    class Jeu
+    {
+     -  pokemonPremiereGenerationArray : String[*]
+     -  m_listeNomPokemon : String[*]
+     + <<Create>> Jeu()
+     + initialisation()
+     - initialisationJoueur()
+     - genererListePokemonAleatoire()
+     - genererPokemonAleatoire() : Pokemon
+     - tour(nbTour : Integer)
+     - demandeAfficherRegle()
+     - {static} scanString() : String
+     - {static} attendreFinDeLecture()
+     - placer(nbTour : Integer)
+     - attaquerTour()
+     - pouvoir()
+     - attaquer(premierJoueur : Joueur, deuxiemeJoueur : Joueur)
+     + start()
+     - impossibleJouer(joueur : Joueur) : Boolean
+     - rendrePokemonsDisponibles(joueur : Joueur)
+     - gagnantPerdant()
+    }
+    class Joueur
+    {
+     #  m_premierJoueur : Boolean
+     + <<Create>> Joueur(premierJoueur : Boolean, pioche : Pokemon[*])
+     + getTerrain() : Terrain
+     + getMain() : Main
+     + getPioche() : Pioche
+     + getDefausse() : Defausse
+     + getTerrainPokemon() : Pokemon[*]
+     + getMainPokemon() : Pokemon[*]
+     + getPiochePokemon() : Pokemon[*]
+     + getTailleMaxPioche() : Integer
+     + getPremierJoueur() : Boolean
+     + piocher()
+     + placer()
+     - choisirPokemonPlacer() : Integer
+     - {static} scanInt() : Integer
+     + attaquer(ennemi : Joueur)
+     + aUnPouvoir() : Boolean
+     + nombrePouvoir() : Integer
+     + utiliserPouvoirs(ennemi : Joueur)
+     + utilisationPouvoir(ennemi : Joueur)
+     + getPokemonCible(ennemi : Joueur, pouvoir : Pouvoir) : Pokemon
+     + afficherPouvoir()
+     - choisirPouvoirUtiliserAfficher(utiliser : Boolean) : Integer
+     + choisirPokemonAttributPouvoir() : Integer
+     + choisirPokemonAttributPouvoir(ennemi : Joueur) : Integer
+     - choisirPokemonAllie() : Integer
+     - choisirPokemonEnnemi(ennemi : Joueur) : Integer
+     - choisirIndice(messageErreur : String, pouvoir : Boolean, utiliserAfficher : Boolean, attributPouvoir : Boolean, pourEnnemi : Boolean, attaque : Boolean, ennemi : Joueur) : Integer
+     - indiceValide(indice : Integer, tailleTerrain : Integer, messageErreur : String, joueur : Joueur) : Boolean
+     - indiceValidePouvoirUtilise(indice : Integer, tailleTerrain : Integer, messageErreur : String) : Boolean
+     - indiceValidePlacerEtPokemonAttributPouvoir(indice : Integer, taille : Integer, messageErreur : String) : Boolean
+     + reutiliserPokemon()
+     + enleverAttaqueTemporaire()
+     + pokemonAPerdu(pokemonQuiAEteAttaque : Pokemon)
+     + aPerdu() : Boolean
+     + aGagne(ennemi : Joueur) : Boolean
+     + toString() : String
+    }
+    class Main
+    {
+     + <<Create>> Main()
+     + getMain() : Pokemon[*]
+     + ajouterPokemonMain(pokemon : Pokemon)
+     + tailleMain() : Integer
+     + getPokemon(indice : Integer) : Pokemon
+     + supprimePokemonMain(pokemon : Pokemon)
+    }
+    class Ordinateur extends Joueur
+    {
+     -  m_indiceProchainPokemonAttaque : Integer
+     -  m_indiceProchainPokemonPouvoir : Integer
+     + <<Create>> Ordinateur(premierJoueur : Boolean, pioche : Pokemon[*])
+     + attaquer(ennemi : Joueur)
+     - pokemonVulnerable(ennemiTerrain : Pokemon[*], avantage : Affinite, pokemonFaibleListe : Pokemon[*])
+     - trouverLePlusFaible(listePokemon : Pokemon[*]) : Pokemon
+     + placer()
+     - indicePouvoir() : Integer[*]
+     + utiliserPouvoirs(ennemi : Joueur)
+     + utilisationPouvoir(ennemi : Joueur)
+     + choisirPokemonAttributPouvoir() : Integer
+     + choisirPokemonAttributPouvoir(ennemi : Joueur) : Integer
+     + toString() : String
+    }
+    class Pioche
+    {
+     -  m_taillePioche : Integer
+     + <<Create>> Pioche(pioche : Pokemon[*])
+     + getPioche() : Pokemon[*]
+     + supprimePokemonPioche(pokemon : Pokemon)
+     + piocher() : Pokemon
+     + getTailleMaxPioche() : Integer
+     + taillePioche() : Integer
+    }
+    class Terrain
+    {
+     + <<Create>> Terrain()
+     + getTerrain() : Pokemon[*]
+     + ajouterPokemonTerrain(pokemon : Pokemon)
+     + supprimePokemonTerrain(pokemon : Pokemon)
+     + getPokemon(indice : Integer) : Pokemon
+     + tailleTerrain() : Integer
+    }
+    class JouerPokemon
+    {
+        + <<Create>> test()
+        + {static} main(args : String[*])
+    }
+}
+
+
+
+package pokemon
+{
+    enum Affinite <<enum>>
+    {
+        AIR
+        EAU
+        FEU
+        TERRE
+    }
+    class Air extends Element
+    {
+         + <<Create>> Air()
+         + getAffinite() : Affinite
+         + getAvantage() : Affinite
+         + getDesavantage() : Affinite
+         + degatAInfliger(ennemi : Element, attaque : Integer) : Integer
+    }
+    class Eau extends Element
+    {
+         + <<Create>> Eau()
+         + getAffinite() : Affinite
+         + getAvantage() : Affinite
+         + getDesavantage() : Affinite
+         + degatAInfliger(ennemi : Element, attaque : Integer) : Integer
+    }
+    abstract class Element <<abstract>>
+    {
+         + <<Create>> Element()
+         + {abstract} getAffinite() : Affinite
+         + {abstract} getDesavantage() : Affinite
+         + {abstract} getAvantage() : Affinite
+         + degatAInfliger(ennemi : Element, attaque : Integer) : Integer
+    }
+    class Feu extends Element
+    {
+         + <<Create>> Feu()
+         + getAffinite() : Affinite
+         + getAvantage() : Affinite
+         + getDesavantage() : Affinite
+         + degatAInfliger(ennemi : Element, attaque : Integer) : Integer
+    }
+    class Pokemon
+    {
+         - m_nom : String {readOnly}
+         - m_vie : Integer
+         - m_vieMax : Integer {readOnly}
+         - m_attaque : Integer
+         - m_attaqueTemporaire : Integer
+         - m_defense : Integer
+         - m_estDejaUtilise : Boolean
+         + <<Create>> Pokemon(nom : String, vieMax : Integer, attaque : Integer, type : Element, pouvoir : Pouvoir)
+         + ajouterType(type : Element)
+         + estEnVie() : Boolean
+         + getNom() : String
+         + getVie() : Integer
+         + getVieMax() : Integer
+         + getAttaque() : Integer
+         + getAttaqueTemporaire() : Integer
+         + seFaitAttaquer(attaque : Integer)
+         + attaque(ennemi : Pokemon)
+         + getPouvoir() : Pouvoir
+         + getType() : Element[*]
+         + getEstDejaUtilise() : Boolean
+         + setEstDejaUtilise(m_estDejaUtilise : Boolean)
+         + setAttaque(attaque : Integer)
+         + setAttaqueTemporaire(attaqueTemporaire : Integer)
+         + setDefense(defense : Integer)
+         + setVie(vie : Integer)
+    }
+    class Terre extends Element
+    {
+         + <<Create>> Terre()
+         + getAffinite() : Affinite
+         + getAvantage() : Affinite
+         + getDesavantage() : Affinite
+         + degatAInfliger(ennemi : Element, attaque : Integer) : Integer
+    }
+}
+
+package pouvoir
+{
+    class Bersek extends Pouvoir
+    {
+        + <<Create>> Bersek(nomPouvoir : String, estReutilisable : Boolean)
+        + afficherDescripition()
+        + utilisationPouvoir(pokemonCible : Pokemon, detenteur : Pokemon, joueur : Joueur)
+        + getCible() : TypePouvoir
+    }
+    class FerveurGuerriere extends Pouvoir
+    {
+        + <<Create>> FerveurGuerriere(nomPouvoir : String, estReutilisable : Boolean)
+        + afficherDescripition()
+        + utilisationPouvoir(pokemonCible : Pokemon, detenteur : Pokemon, joueur : Joueur)
+        + getCible() : TypePouvoir
+    }
+    class Intimidation extends Pouvoir
+    {
+        + <<Create>> Intimidation(nomPouvoir : String, estReutilisable : Boolean)
+        + afficherDescripition()
+        + utilisationPouvoir(pokemonCible : Pokemon, detenteur : Pokemon, joueur : Joueur)
+        + getCible() : TypePouvoir
+    }
+    class Kamikaze extends Pouvoir
+    {
+        + <<Create>> Kamikaze()
+        + afficherDescripition()
+        + utilisationPouvoir(pokemonCible : Pokemon, detenteur : Pokemon, joueur : Joueur)
+        + getCible() : TypePouvoir
+    }
+    class Peur extends Pouvoir
+    {
+        + <<Create>> Peur()
+        + afficherDescripition()
+        + utilisationPouvoir(pokemonCible : Pokemon, detenteur : Pokemon, joueur : Joueur)
+        + getCible() : TypePouvoir
+    }
+    abstract class Pouvoir <<abstract>>
+    {
+        #  m_nomPouvoir : String
+        #  m_estReutilisable : Boolean
+        #  m_estDejaUtilise : Boolean
+        + <<Create>> Pouvoir(nomPouvoir : String)
+        + getNomPouvoir() : String
+        + getEstDejaUtilise() : Boolean
+        + getEstReutilisable() : Boolean
+        + {abstract} afficherDescripition()
+        + {abstract} utilisationPouvoir(pokemonCible : Pokemon, detenteur : Pokemon, joueur : Joueur)
+        + {abstract} getCible() : TypePouvoir
+    }
+    class Resistance extends Pouvoir
+    {
+        + <<Create>> Resistance()
+        + afficherDescripition()
+        + utilisationPouvoir(pokemonCible : Pokemon, detenteur : Pokemon, joueur : Joueur)
+        + getCible() : TypePouvoir
+    }
+    class SoinSimple extends Pouvoir
+    {
+        + <<Create>> SoinSimple()
+        + getEstDejaUtilise() : Boolean
+        + afficherDescripition()
+        + utilisationPouvoir(pokemonCible : Pokemon, detenteur : Pokemon, joueur : Joueur)
+        + getCible() : TypePouvoir
+    }
+    class SoinsTotal extends Pouvoir
+    {
+        + <<Create>> SoinsTotal()
+        + afficherDescripition()
+        + utilisationPouvoir(pokemonCible : Pokemon, detenteur : Pokemon, joueur : Joueur)
+        + getCible() : TypePouvoir
+    }
+    enum TypePouvoir <<enum>>
+    {
+        NOUS
+        ENNEMI
+    }
+}
+
+Jeu *--> "0..8\n - m_listePouvoir" Pouvoir
+Jeu *--> "41\n - m_pokemonList" Pokemon
+Jeu *--> "1\n - m_joueur1"Joueur
+Jeu *--> "1\n - m_joueur2"Joueur
+
+Pioche o--> "0..21\n - m_pioche" Pokemon
+Main o--> "0..5\n - m_main" Pokemon
+Terrain o--> "0..3\n - m_terrain" Pokemon
+Defausse o--> "*\n - m_defausse" Pokemon
+
+Joueur ..> Affichage : <<call>>
+Joueur ..> Pouvoir : <<use>>
+Joueur *--> "1\n # m_pioche"Pioche
+Joueur *--> "1\n # m_main"Main
+Joueur *--> "1\n # m_terrain"Terrain
+Joueur *--> "1\n # m_defausse"Defausse
+
+Ordinateur ..> Element : <<use>>
+
+Pokemon ...> Affichage : <<call>>
+Jeu ...> Affichage : <<call>>
+Pouvoir ..> Affichage : <<call>>
+Pokemon *--> "*\n - m_type" Element
+Element ..> Affinite : <<use>>
+Air ..> Affinite : <<use>>
+Eau ..> Affinite : <<use>>
+Feu ..> Affinite : <<use>>
+Terre ..> Affinite : <<use>>
+
+Pokemon o--> "0..1\n - m_pouvoir"Pouvoir
+
+Affichage ..> Joueur : <<use>>
+Affichage ..> Pokemon : <<use>>
+Affichage ..> Element : <<use>>
+Affichage ..> Pouvoir : <<use>>
+JouerPokemon ..> Jeu : <<instantiate>>
+
+
+Pouvoir          ..> TypePouvoir : <<use>>
+Bersek           ..> TypePouvoir : <<use>>
+FerveurGuerriere ..> TypePouvoir : <<use>>
+Intimidation     ..> TypePouvoir : <<use>>
+Kamikaze         ..> TypePouvoir : <<use>>
+Peur             ..> TypePouvoir : <<use>>
+Resistance       ..> TypePouvoir : <<use>>
+SoinSimple       ..> TypePouvoir : <<use>>
+SoinsTotal       ..> TypePouvoir : <<use>>
+
+
+@enduml
